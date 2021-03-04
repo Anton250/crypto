@@ -7,6 +7,7 @@ from src.algorythms.vizhiner import Vizhiner
 from src.algorythms.vizhiner_s import VizhinerS
 from src.algorythms.playfair import Playfair
 from src.algorythms.matrix import Matrix
+from src.algorythms.magma import MagmaSubsitution
 
 algo_dict = {
     'AT': Atbash,
