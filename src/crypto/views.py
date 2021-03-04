@@ -32,4 +32,13 @@ class AlgorythmViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixin
         else:
             result = algorythm.decrypt(data['text'])
 
-        return Response({'result': result})
+        response = {}
+        if isinstance(result, str):
+            response = {'result': result}
+        else:
+            response = {
+                'result': result['result'],
+                'info': result['info'],
+            }
+
+        return Response(response)

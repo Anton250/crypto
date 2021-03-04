@@ -69,7 +69,9 @@ class Playfair:
 
             encoded += self.matrix[first_pos[0]][first_pos[1]] + self.matrix[second_pos[0]][second_pos[1]]
         
-        return encoded
+        result_matrix = '\n'.join([' '.join(r) for r in self.matrix])
+        
+        return {'result': encoded, 'info': result_matrix}
 
     # функция расшифрования
     def decrypt(self, mes):
@@ -98,4 +100,6 @@ class Playfair:
 
             decoded += self.matrix[first_pos[0]][first_pos[1]] + self.matrix[second_pos[0]][second_pos[1]]
         
-        return decoded    
+        result_matrix = '\n'.join([' '.join(r) for r in self.matrix])
+        
+        return {'result': decoded, 'info': result_matrix}
