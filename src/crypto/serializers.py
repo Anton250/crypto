@@ -30,5 +30,5 @@ class ActionSerializer(serializers.Serializer):
     action = serializers.ChoiceField(choices=ACTIONS)
     keys = serializers.JSONField(required=False)
     text = serializers.CharField()
-    alphabet = serializers.IntegerField()
+    alphabet = serializers.IntegerField(required=False)
     algorythm = serializers.IntegerField()

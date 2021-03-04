@@ -22,7 +22,10 @@ class AlgorythmViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixin
         data = ActionSerializer(data=request.data)
         data.is_valid(raise_exception=True)
         data = data.validated_data
-        alphabet = Alphabet.objects.get(id=data['alphabet']).value
+        if data.get('alphabet'):
+            alphabet = Alphabet.objects.get(id=data['alphabet']).value
+        else:
+            alphabet = 'АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ'
         algorythm = getattr(algos, Algorythm.objects.get(id=data['algorythm']).class_name)(keys=data['keys'], alph=alphabet)
         if (data['action'] == ActionSerializer.ENCRYPT):
             result = algorythm.encrypt(data['text'])
