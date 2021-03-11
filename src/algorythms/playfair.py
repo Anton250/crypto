@@ -1,3 +1,5 @@
+from rest_framework.serializers import ValidationError
+
 class Playfair:
     alph = [
         l for l in 'АБВГДЕЖЗИКЛМНОПРСТУФХЦЧШЩЬЫЭЮЯ'
@@ -9,8 +11,10 @@ class Playfair:
         test_set = {
             l for l in self.key
         }
+        if len(self.key) > 30:
+            raise ValidationError('Лозунг не может быть длиннее 30 символов')
         if len(test_set) != len(self.key):
-            raise ValueError('Лозунг не может содержать одинаковые буквы')
+            raise ValidationError('Лозунг не может содержать одинаковые буквы')
 
         self.matrix = []
 
@@ -30,7 +34,7 @@ class Playfair:
     def encrypt(self, mes):
         for l in mes:
             if l not in self.alph:
-                raise ValueError(f'Неизвестный символ {l}')
+                raise ValidationError(f'Неизвестный символ {l}')
         mes = [l for l in mes]
         encoded = ''
         prepared = False

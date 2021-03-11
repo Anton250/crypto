@@ -1,12 +1,13 @@
 import numpy as np
 from random import randint
+from rest_framework.serializers import ValidationError
 
 class Matrix:
     def __init__(self, alph='АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ', keys={}, **kwargs):
         self.alph = alph
         self.matrix = np.array(keys.get('M'))
         if np.linalg.det(self.matrix) == 0:
-            raise ValueError('Матрица необратима')
+            raise ValidationError('Матрица необратима')
 
     def encrypt(self, mes):
         mes = [

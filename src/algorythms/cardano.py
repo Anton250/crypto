@@ -1,17 +1,21 @@
+from rest_framework.serializers import ValidationError
 from random import randint
 
 class Cardano:
     def __init__(self, keys={}, **kwargs):
         self.key = keys.get('R')
         self.alph = 'АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ'
+        cnt = 0
         for i in range(len(self.key)):
             for j in range(len(self.key[i])):
-                if self.key[i][j] == 1 and (
-                self.key[i][j] == self.key[i][-(j + 1)] or \
-                self.key[i][j] == self.key[-(i + 1)][j] or \
-                self.key[i][j] == self.key[-(i + 1)][-(j + 1)]):
-                    raise ValueError('Некорректная решетка')
-
+                if self.key[i][j] == 1:
+                    cnt += 1
+                    if (self.key[i][j] == self.key[i][-(j + 1)] or \
+                    self.key[i][j] == self.key[-(i + 1)][j] or \
+                    self.key[i][j] == self.key[-(i + 1)][-(j + 1)]):
+                        raise ValidationError('Некорректная решетка')
+        if cnt != (len(self.key) * len(self.key[0]) // 4):
+            raise ValidationError('Некорректная решетка')
     
     # перевернуть по вертикали
     def rotate_vertical(self):
@@ -40,7 +44,7 @@ class Cardano:
         encrypted = ''
         max_len = len(self.key) * len(self.key[0])
         if len(mes) > max_len:
-            raise ValueError('Сообщение больше карточки')
+            raise ValidationError('Сообщение больше карточки')
         
         if len(mes) % max_len != 0:
             for i in range(max_len - len(mes) % max_len):
@@ -77,7 +81,7 @@ class Cardano:
     def decrypt(self, mes):
         decrypted = ''
         if len(mes) != len(self.key) * len(self.key[0]):
-            raise ValueError('Неправильная длина сообщения')
+            raise ValidationError('Неправильная длина сообщения')
         
         table = self.create_table()
 
