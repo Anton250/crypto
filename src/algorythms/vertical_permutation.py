@@ -33,7 +33,7 @@ class VerticalPermutation:
                     continue
                 encrypted += table[i][k]
 
-        return encrypted
+        return {'result': encrypted, 'info': self.key}
 
 
     def decrypt(self, mes):
@@ -65,4 +65,4 @@ class VerticalPermutation:
                     continue
                 decrypted += blocks[j][i]
             
-        return decrypted
+        return {'result': decrypted, 'info': self.key}
