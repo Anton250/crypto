@@ -6,7 +6,7 @@ class VerticalPermutation:
         for l in key:
             i = sorted_key.index(l)
             while i + 1 < len(sorted_key):
-                if sorted_key[i] == sorted_key[i + 1]:
+                if sorted_key[i] == sorted_key[i + 1] and i in self.key:
                     i += 1
                 else:
                     break
