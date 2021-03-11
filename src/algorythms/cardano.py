@@ -38,14 +38,11 @@ class Cardano:
                 table[i].append('')
             
         return table
-        
 
-    def encrypt(self, mes):
+
+    def __encrypt(self, mes):
         encrypted = ''
         max_len = len(self.key) * len(self.key[0])
-        if len(mes) > max_len:
-            raise ValidationError('Сообщение больше карточки')
-        
         if len(mes) % max_len != 0:
             for i in range(max_len - len(mes) % max_len):
                 mes += self.alph[randint(0, len(self.alph) - 1)]
@@ -75,13 +72,10 @@ class Cardano:
             for col in row:
                 encrypted += col
         
-        return encrypted
+        return encrypted            
 
-
-    def decrypt(self, mes):
+    def __decrypt(self, mes):
         decrypted = ''
-        if len(mes) != len(self.key) * len(self.key[0]):
-            raise ValidationError('Неправильная длина сообщения')
         
         table = self.create_table()
 
@@ -108,5 +102,25 @@ class Cardano:
                 self.rotate_vertical()
             else:
                 self.rotate_vertical()
+
+        return decrypted
+
+
+    def encrypt(self, mes):
+        encrypted = ''
+        max_len = len(self.key) * len(self.key[0])
+        blocks_cnt = len(mes) // max_len + 1 if len(mes) % max_len != 0 else len(mes) // max_len
+        for i in range(blocks_cnt):
+            encrypted += self.__encrypt(mes[i * max_len: i * max_len + max_len])
+        
+        return encrypted
+
+
+    def decrypt(self, mes):
+        decrypted = ''
+        max_len = len(self.key) * len(self.key[0])
+        blocks_cnt = len(mes) // max_len + 1 if len(mes) % max_len != 0 else len(mes) // max_len
+        for i in range(blocks_cnt):
+            decrypted += self.__decrypt(mes[i * max_len: i * max_len + max_len])
 
         return decrypted
