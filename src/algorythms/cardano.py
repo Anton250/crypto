@@ -4,7 +4,13 @@ class Cardano:
     def __init__(self, keys={}, **kwargs):
         self.key = keys.get('R')
         self.alph = 'АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ'
-        # add check key
+        for i in range(len(self.key)):
+            for j in range(len(self.key[i])):
+                if self.key[i][j] == 1 and (
+                self.key[i][j] == self.key[i][-(j + 1)] or \
+                self.key[i][j] == self.key[-(i + 1)][j] or \
+                self.key[i][j] == self.key[-(i + 1)][-(j + 1)]):
+                    raise ValueError('Некорректная решетка')
 
     
     # перевернуть по вертикали
