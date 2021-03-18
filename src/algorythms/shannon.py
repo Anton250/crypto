@@ -24,17 +24,21 @@ class Shannon:
     def encrypt(self, message):
         self.generator.reset()
         result = ''
+        gamma = []
         for l in message:
             num = self.generator.next() # получаем следующее значение гаммы
+            gamma.append(str(num))
             ind = self.alph.index(l)
             result += self.alph[(num + ind)%self.module] # накладываем гамму
-        return result
+        return {'result': encoded, 'info': ','.join(gamma)}
         
     def decrypt(self, message):
         self.generator.reset()
         result = ''
+        gamma = []
         for l in message:
             num = self.generator.next() # получаем следующее значение гаммы
+            gamma.append(str(num))
             ind = self.alph.index(l)
             result += self.alph[(ind + (self.module - num))%self.module] # снимаем гамму
-        return result
+        return {'result': encoded, 'info': ','.join(gamma)}
