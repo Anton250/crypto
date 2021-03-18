@@ -17,7 +17,7 @@ SUBSITUTION_BLOCK = [
 ]
 
 class MagmaGamma:
-    def __init__(self, keys={}):
+    def __init__(self, keys={}, **kwargs):
         try:
             self.key = int(keys.get('K','').lower(), 16)
         except:
