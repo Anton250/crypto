@@ -18,7 +18,7 @@ class GammaGenerator:
 class Shannon:
     def __init__(self, alph='АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ', keys={}, **kwargs):
         self.alph = alph
-        self.generator = GammaGenerator(keys['a'], keys['c'], keys['m'], keys['X'])
+        self.generator = GammaGenerator(int(keys['a']), int(keys['c']), int(keys['m']), int(keys['X']))
         self.module = len(alph)
 
     def encrypt(self, message):
