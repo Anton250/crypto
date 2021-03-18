@@ -10,6 +10,8 @@ from src.algorythms.matrix import Matrix
 from src.algorythms.magma import MagmaSubsitution
 from src.algorythms.vertical_permutation import VerticalPermutation
 from src.algorythms.cardano import Cardano
+from src.algorythms.magma_gamma import MagmaGamma
+from src.algorythms.shannon import Shannon
 
 algo_dict = {
     'AT': Atbash,
