@@ -30,7 +30,7 @@ class Shannon:
             gamma.append(str(num))
             ind = self.alph.index(l)
             result += self.alph[(num + ind)%self.module] # накладываем гамму
-        return {'result': encoded, 'info': ','.join(gamma)}
+        return {'result': result, 'info': ','.join(gamma)}
         
     def decrypt(self, message):
         self.generator.reset()
@@ -41,4 +41,4 @@ class Shannon:
             gamma.append(str(num))
             ind = self.alph.index(l)
             result += self.alph[(ind + (self.module - num))%self.module] # снимаем гамму
-        return {'result': encoded, 'info': ','.join(gamma)}
+        return {'result': result, 'info': ','.join(gamma)}
