@@ -12,6 +12,9 @@ from src.algorythms.vertical_permutation import VerticalPermutation
 from src.algorythms.cardano import Cardano
 from src.algorythms.magma_gamma import MagmaGamma
 from src.algorythms.shannon import Shannon
+from src.algorythms.magma_simple_subsitution import MagmaSimpleSubsition
+from src.algorythms.a51 import A51
+from src.algorythms.a52 import A52
 
 algo_dict = {
     'AT': Atbash,

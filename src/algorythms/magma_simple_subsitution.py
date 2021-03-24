@@ -1,9 +1,9 @@
 from rest_framework.serializers import ValidationError
 from cached_property import cached_property
 from math import ceil, pow
+from random import randint
 
-C1 = int('00000001000000010000000100000100', 2)
-C2 = int('00000001000000010000000100000001', 2)
+
 SUBSITUTION_BLOCK = [
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15),
     (12, 4, 6, 2, 10, 5, 11, 9, 14, 8, 13, 7, 0, 3, 15, 1),
@@ -15,8 +15,9 @@ SUBSITUTION_BLOCK = [
     (8, 14, 2, 5, 6, 9, 1, 12, 15, 4, 11, 0, 13, 10, 3, 7),
     (1, 7, 14, 13, 0, 5, 8, 3, 4, 15, 10, 6, 9, 12, 11, 2),
 ]
+ENGLISH_ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
-class MagmaGamma:
+class MagmaSimpleSubsition:
     def __init__(self, keys={}, **kwargs):
         try:
             self.key = int(keys.get('K','').lower(), 16)
@@ -25,13 +26,6 @@ class MagmaGamma:
         if len(bin(self.key)[2:]) > 256:
             raise ValidationError('Неверная длина ключа')
         self.key = bin(self.key)[2:].zfill(256)
-        try:
-            self.synchro = int(keys.get('S', '').lower(), 16)
-        except:
-            raise ValidationError('Неверный формат синхропосылки')
-        if len(bin(self.synchro)[2:]) > 64:
-            raise ValidationError('Неверная длина синхропосылки')
-        self.synchro = bin(self.synchro)[2:].zfill(64)
 
 
     @cached_property
@@ -49,7 +43,7 @@ class MagmaGamma:
             result += bin(SUBSITUTION_BLOCK[i + 1][SUBSITUTION_BLOCK[0].index(int(temp_val[i * 4:i * 4 + 4],2))])[2:].zfill(4)
         result = result[11:] + result[:11] # циклический сдвиг на 11 бит
         return int(result, 2)
-        
+
 
     def _encrypt_subsitution(self, left_part, right_part):
         '''
@@ -76,47 +70,76 @@ class MagmaGamma:
             left_part, right_part = round_encrypt(left_part, right_part, self.sub_keys[7 - i])
 
         return left_part, right_part
-    
-    def gamma_overlay(self, mes):
-        try:
-            int(mes, 16)
-        except:
-            raise ValidationError('Сообщение должно быть в шестнадцатиричном формате')
-        result = ''
-        # разбиваем на блоки
-        blocks = [
-            mes[i * 16:i * 16 + 16]
-            for i in range(ceil(len(mes)/16))
-        ]
 
-        N1, N2 = self.synchro[:32][::-1], self.synchro[32:][::-1] # заполняем начальными значениями
-        N3, N4 = self._encrypt_subsitution(N2, N1) # заполняем начальными значениями N3 и N4
-
-
-        for block in blocks:
-            # складываем значение из N4 с константой C1 по модулю 2^32 - 1
-            N4 = bin((int(N4,2) + C1) % int((2**32 - 1)))[2:].zfill(32)
-            # складываем значение из N3 с константой C2 по модулю 2^32
-            N3 = bin((int(N3,2) + C2) % int(2**32))[2:].zfill(32)
-            N1, N2 = N3, N4
-            # получаем гамму в двоичном формате
-            gamma = ''.join(self._encrypt_subsitution(N2, N1)[::-1])
-            # если длина блока меньше 64, то обрезаем гамму
-            if len(gamma) > len(block):
-                gamma = gamma[:len(block)]
-            # XOR гаммы с блоком
-            result += hex(int(gamma, 2) ^ int(block, 16))[2:].zfill(len(block) // 4)
+    def _decrypt_subsitution(self, left_part, right_part):
+        '''
+        Расшифрование простой заменой 
+        '''    
+        def round_decrypt(left_part, right_part, key):
+            '''
+            Шифруем правую часть
+            XOR с левой
+            Меняем местами
+            '''
+            key = int(key, 2)
+            right_part = int(right_part, 2)
+            left_part_int = int(left_part, 2)
+            return bin(right_part ^ self._encrypt_function(left_part_int, key))[2:].zfill(32), left_part
         
-        return result
+
+        for i in range(8):
+            left_part, right_part = round_decrypt(left_part, right_part, self.sub_keys[i])
+
+        for i in range(24):
+            left_part, right_part = round_decrypt(left_part, right_part, self.sub_keys[7 - (i % 8)])
+
+        return left_part, right_part
+
 
     def encrypt(self, mes):
         try:
             int(mes, 16)
         except:
             mes = bytes(mes, 'utf-8').hex()
+
+        mod = len(mes) % 16
+        if mod != 0:
+            for i in range((16 - mod) // 2):
+                mes += bytes(ENGLISH_ALPHABET[randint(0, len(ENGLISH_ALPHABET) - 1)], 'utf-8').hex()
         
-        return self.gamma_overlay(mes)
+
+        blocks = [
+            bin(int(mes[i * 16:i * 16 + 16], 16))[2:].zfill(64) for i in range(len(mes) // 16)
+        ]
+
+
+        encrypted = ''
+
+        for block in blocks:
+            encrypted += ''.join(self._encrypt_subsitution(block[:32], block[32:]))
+
+
+        return hex(int(encrypted, 2))[2:]
     
     def decrypt(self, mes):
-        
-        return bytearray.fromhex(self.gamma_overlay(mes)).decode('utf-8')
+
+        try:
+            int(mes, 16)
+        except:
+            raise ValidationError('Сообщение должно быть в шестандцатиричном формате')
+
+        mod = len(mes) % 16
+        if mod != 0:
+            raise ValidationError('Сообщение имеет некорректную длину')
+
+
+        blocks = [
+            bin(int(mes[i * 16:i * 16 + 16], 16))[2:].zfill(64) for i in range(len(mes) // 16)
+        ]
+
+        decrypted = ''
+
+        for block in blocks:
+            decrypted += ''.join(self._decrypt_subsitution(block[:32], block[32:]))
+
+        return bytearray.fromhex(hex(int(decrypted, 2))[2:]).decode('utf-8')
