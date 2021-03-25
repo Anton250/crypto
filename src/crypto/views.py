@@ -5,7 +5,9 @@ from rest_framework.response import Response
 from src.crypto.serializers import AlgorythmSerializer, AlphabetSerializer, ActionSerializer
 from src.crypto.models import Algorythm, Alphabet
 
-from src.algorythms import algos
+from src.utils import do_action
+from django.http.response import HttpResponse
+import io
 
 
 class AlphabetViewSet(viewsets.ReadOnlyModelViewSet):
@@ -22,23 +24,14 @@ class AlgorythmViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixin
         data = ActionSerializer(data=request.data)
         data.is_valid(raise_exception=True)
         data = data.validated_data
-        if data.get('alphabet'):
-            alphabet = Alphabet.objects.get(id=data['alphabet']).value
-        else:
-            alphabet = 'АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ'
-        algorythm = getattr(algos, Algorythm.objects.get(id=data['algorythm']).class_name)(keys=data['keys'], alph=alphabet)
-        if (data['action'] == ActionSerializer.ENCRYPT):
-            result = algorythm.encrypt(data['text'])
-        else:
-            result = algorythm.decrypt(data['text'])
+        if data.get('f'):
+            data['text'] = data['f'].file.read().decode('utf-8')
+        result = do_action(data)
 
-        response = {}
-        if isinstance(result, str):
-            response = {'result': result}
+        if data['return_file']:
+            f = io.StringIO(result['result'])
+            response = HttpResponse(f.getvalue(), content_type='application/txt')
+            response['Content-Disposition'] = 'attachment; filename="%s"' % 'result.txt'
         else:
-            response = {
-                'result': result['result'],
-                'info': result['info'],
-            }
-
-        return Response(response)
+            response = Response(result)
+        return response

@@ -29,6 +29,8 @@ class ActionSerializer(serializers.Serializer):
 
     action = serializers.ChoiceField(choices=ACTIONS)
     keys = serializers.JSONField(required=False)
-    text = serializers.CharField()
+    text = serializers.CharField(required=False, allow_blank=True)
     alphabet = serializers.IntegerField(required=False)
     algorythm = serializers.IntegerField()
+    f = serializers.FileField(required=False, allow_null=True)
+    return_file = serializers.BooleanField(default=False)

@@ -1,6 +1,5 @@
 from rest_framework.serializers import ValidationError
 from cached_property import cached_property
-from math import ceil, pow
 from random import randint
 
 
