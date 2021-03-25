@@ -36,7 +36,7 @@ class MagmaGamma:
 
     @cached_property
     def sub_keys(self):
-        return [self.key[i * 32:i * 32 + 32][::-1] for i in range(8)] # разбиваем на 8 блоков
+        return [self.key[i * 32:i * 32 + 32] for i in range(8)] # разбиваем на 8 блоков
 
     def _encrypt_function(self, part:int, key:int):
         '''
@@ -89,7 +89,7 @@ class MagmaGamma:
             for i in range(ceil(len(mes)/16))
         ]
 
-        N1, N2 = self.synchro[:32][::-1], self.synchro[32:][::-1] # заполняем начальными значениями
+        N1, N2 = self.synchro[:32], self.synchro[32:] # заполняем начальными значениями
         N3, N4 = self._encrypt_subsitution(N2, N1) # заполняем начальными значениями N3 и N4
 
 

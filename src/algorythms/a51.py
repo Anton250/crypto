@@ -36,10 +36,10 @@ class A51:
         mes = bin(int(bytes(mes, 'utf-8').hex(), 16))[2:].zfill(mes_len * 4)
         encrypted = ''
         for l in mes:
-            func_result = self._synchronization_func(self.R1[8], self.R2[10], self.R3[10])
-            self.R1 = self._shift_registr(self.R1, func_result, 8, bits_pos=[18, 17, 16, 13])
-            self.R2 = self._shift_registr(self.R2, func_result, 10, bits_pos=[21, 20])
-            self.R3 = self._shift_registr(self.R3, func_result, 10, bits_pos=[22, 21, 20, 7])
+            func_result = self._synchronization_func(self.R1[-8], self.R2[-10], self.R3[-10])
+            self.R1 = self._shift_registr(self.R1, func_result, 8, bits_pos=[-18, -17, -16, -13])
+            self.R2 = self._shift_registr(self.R2, func_result, 10, bits_pos=[-21, -20])
+            self.R3 = self._shift_registr(self.R3, func_result, 10, bits_pos=[-22, -21, -20, -7])
             encrypted += str(int(self.R1[0]) ^ int(self.R2[0]) ^ int(self.R3[0]) ^ int(l))
 
         return hex(int(encrypted, 2))[2:]
@@ -50,10 +50,10 @@ class A51:
         mes = bin(int(mes, 16))[2:].zfill(mes_len * 4)
         decrypted = ''
         for l in mes:
-            func_result = self._synchronization_func(self.R1[8], self.R2[10], self.R3[10])
-            self.R1 = self._shift_registr(self.R1, func_result, 8, bits_pos=[18, 17, 16, 13])
-            self.R2 = self._shift_registr(self.R2, func_result, 10, bits_pos=[21, 20])
-            self.R3 = self._shift_registr(self.R3, func_result, 10, bits_pos=[22, 21, 20, 7])
+            func_result = self._synchronization_func(self.R1[-8], self.R2[-10], self.R3[-10])
+            self.R1 = self._shift_registr(self.R1, func_result, 8, bits_pos=[-18, -17, -16, -13])
+            self.R2 = self._shift_registr(self.R2, func_result, 10, bits_pos=[-21, -20])
+            self.R3 = self._shift_registr(self.R3, func_result, 10, bits_pos=[-22, -21, -20, -7])
             decrypted += str(int(self.R1[0]) ^ int(self.R2[0]) ^ int(self.R3[0]) ^ int(l))
 
         return bytearray.fromhex(hex(int(decrypted, 2))[2:]).decode('utf-8')
