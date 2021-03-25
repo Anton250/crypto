@@ -17,7 +17,7 @@ class AlphabetViewSet(viewsets.ReadOnlyModelViewSet):
 
 class AlgorythmViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.ListModelMixin):
     serializer_class = AlgorythmSerializer
-    queryset = Algorythm.objects.all().order_by('name')
+    queryset = Algorythm.objects.all().order_by('algo_num', 'name')
 
     @action(detail=False, methods=['post'])
     def action(self, request):

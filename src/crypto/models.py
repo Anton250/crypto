@@ -7,6 +7,7 @@ class Algorythm(models.Model):
     class_name = models.CharField(max_length=128)
     key_opts = models.TextField(default='[]')
     no_alphabet = models.BooleanField(default=False)
+    algo_num = models.IntegerField(default=0)
 
     @property
     def options(self):
