@@ -12,6 +12,12 @@ class Algorythm(models.Model):
     def options(self):
         return json.loads(self.key_opts)
 
+    def __str__(self):
+        return self.name
+
 class Alphabet(models.Model):
     name = models.CharField(max_length=128)
     value = models.CharField(max_length=256)
+
+    def __str__(self):
+        return self.name

@@ -8,9 +8,6 @@ class Caesar:
     def encrypt(self, mes):
         encoded = ''
         for l in mes:
-            if not l in self.alph:
-                encoded += l
-                continue
             encoded += self.shift_alph[self.alph.index(l)]
         
         return encoded
@@ -19,9 +16,6 @@ class Caesar:
     def decrypt(self, mes):
         decoded = ''
         for l in mes:
-            if not l in self.alph:
-                decoded += l
-                continue
             decoded += self.alph[self.shift_alph.index(l)]
         
         return decoded

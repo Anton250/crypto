@@ -9,9 +9,6 @@ class Atbash:
     def encrypt(self, mes):
         encoded = ''
         for l in mes:
-            if not l in self.alph:
-                encoded += l
-                continue
             encoded += self.reverse_alph[self.alph.index(l)]
         
         return encoded
@@ -20,9 +17,6 @@ class Atbash:
     def decrypt(self, mes):
         decoded = ''
         for l in mes:
-            if not l in self.alph:
-                decoded += l
-                continue
             decoded += self.alph[self.reverse_alph.index(l)]
         
         return decoded
