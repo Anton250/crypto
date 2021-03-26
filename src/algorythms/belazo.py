@@ -8,11 +8,10 @@ class Belazo(Tritemy):
     def encrypt(self, mes):
         encrypted = ''
         i = 0
+        key_len = len(self.key)
         for l in mes:
-            encrypted += self.alph_matrix[self.alph.index(self.key[i])][self.alph.index(l)]
+            encrypted += self.alph_matrix[self.alph.index(self.key[i % key_len])][self.alph.index(l)]
             i += 1
-            if (i == len(self.key)):
-                i = 0
 
         return encrypted
 
@@ -20,10 +19,9 @@ class Belazo(Tritemy):
     def decrypt(self, mes):
         decrypted = ''
         i = 0
+        key_len = len(self.key)
         for l in mes:
-            decrypted += self.alph[self.alph_matrix[self.alph.index(self.key[i])].index(l)]
+            decrypted += self.alph[self.alph_matrix[self.alph.index(self.key[i % key_len])].index(l)]
             i += 1
-            if (i == len(self.key)):
-                i = 0
 
         return decrypted

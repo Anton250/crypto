@@ -5,7 +5,6 @@ from math import ceil, pow
 C1 = int('00000001000000010000000100000100', 2)
 C2 = int('00000001000000010000000100000001', 2)
 SUBSITUTION_BLOCK = [
-    (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15),
     (12, 4, 6, 2, 10, 5, 11, 9, 14, 8, 13, 7, 0, 3, 15, 1),
     (6, 8, 2, 3, 9, 10, 5, 12, 1, 14, 4, 7, 11, 13, 0, 15),
     (11, 3, 5, 8, 2, 15, 10, 13, 14, 1, 7, 4, 12, 9, 6, 0),
@@ -26,7 +25,7 @@ class MagmaGamma:
             raise ValidationError('Неверная длина ключа')
         self.key = bin(self.key)[2:].zfill(256)
         try:
-            self.synchro = int(keys.get('S', '').lower(), 16)
+            self.synchro = int(keys.get('S', '').lower()[::-1].zfill(16)[::-1], 16)
         except:
             raise ValidationError('Неверный формат синхропосылки')
         if len(bin(self.synchro)[2:]) > 64:
@@ -42,11 +41,12 @@ class MagmaGamma:
         '''
         Функция шифрования
         '''
-        temp_val = bin((part + key) % (2**32))[2:].zfill(32) # складываем по модулю 2^32
+        temp_val = hex((part + key) % (2**32))[2:].zfill(8) # складываем по модулю 2^32
         result = ''
         for i in range(8):
             # производим простую замену по таблице
-            result += bin(SUBSITUTION_BLOCK[i + 1][SUBSITUTION_BLOCK[0].index(int(temp_val[i * 4:i * 4 + 4],2))])[2:].zfill(4)
+            result += hex(SUBSITUTION_BLOCK[-(i + 1)][int(temp_val[i],16)])[2:]
+        result = bin(int(result,16))[2:].zfill(32)
         result = result[11:] + result[:11] # циклический сдвиг на 11 бит
         return int(result, 2)
         
@@ -75,7 +75,7 @@ class MagmaGamma:
             # в последних 8 итерациях подключи используем в другом порядке
             left_part, right_part = round_encrypt(left_part, right_part, self.sub_keys[7 - i])
 
-        return left_part, right_part
+        return right_part, left_part
     
     def gamma_overlay(self, mes):
         try:
@@ -90,22 +90,22 @@ class MagmaGamma:
         ]
 
         N1, N2 = self.synchro[:32], self.synchro[32:] # заполняем начальными значениями
-        N3, N4 = self._encrypt_subsitution(N2, N1) # заполняем начальными значениями N3 и N4
-
+        N3, N4 = self._encrypt_subsitution(N1, N2) # заполняем начальными значениями N3 и N4
+        gamma = ''.join((N3, N4))
 
         for block in blocks:
+            if len(gamma) > len(block) * 4:
+                gamma = gamma[:len(block) * 4]
+            # XOR гаммы с блоком
+            result += hex(int(gamma, 2) ^ int(block, 16))[2:].zfill(len(block))
             # складываем значение из N4 с константой C1 по модулю 2^32 - 1
             N4 = bin((int(N4,2) + C1) % int((2**32 - 1)))[2:].zfill(32)
             # складываем значение из N3 с константой C2 по модулю 2^32
             N3 = bin((int(N3,2) + C2) % int(2**32))[2:].zfill(32)
             N1, N2 = N3, N4
             # получаем гамму в двоичном формате
-            gamma = ''.join(self._encrypt_subsitution(N2, N1)[::-1])
+            gamma = ''.join(self._encrypt_subsitution(N1, N2))
             # если длина блока меньше 64, то обрезаем гамму
-            if len(gamma) > len(block):
-                gamma = gamma[:len(block)]
-            # XOR гаммы с блоком
-            result += hex(int(gamma, 2) ^ int(block, 16))[2:].zfill(len(block) // 4)
         
         return result
 

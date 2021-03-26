@@ -10,10 +10,8 @@ class Tritemy:
         encrypted = ''
         i = 0
         for l in mes:
-            encrypted += self.alph_matrix[i][self.alph.index(l)]
+            encrypted += self.alph_matrix[i % len(self.alph)][self.alph.index(l)]
             i += 1
-            if (i == len(self.alph)):
-                i = 0
         
         return encrypted
     
@@ -21,10 +19,8 @@ class Tritemy:
         decrypted = ''
         i = 0
         for l in mes:
-            decrypted += self.alph[self.alph_matrix[i].index(l)]
+            decrypted += self.alph[self.alph_matrix[i % len(self.alph)].index(l)]
             i += 1
-            if (i == len(self.alph)):
-                i = 0
         
         return decrypted
 

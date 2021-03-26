@@ -4,7 +4,6 @@ from random import randint
 
 
 SUBSITUTION_BLOCK = [
-    (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15),
     (12, 4, 6, 2, 10, 5, 11, 9, 14, 8, 13, 7, 0, 3, 15, 1),
     (6, 8, 2, 3, 9, 10, 5, 12, 1, 14, 4, 7, 11, 13, 0, 15),
     (11, 3, 5, 8, 2, 15, 10, 13, 14, 1, 7, 4, 12, 9, 6, 0),
@@ -35,11 +34,12 @@ class MagmaSimpleSubsition:
         '''
         Функция шифрования
         '''
-        temp_val = bin((part + key) % (2**32))[2:].zfill(32) # складываем по модулю 2^32
+        temp_val = hex((part + key) % (2**32))[2:].zfill(8) # складываем по модулю 2^32
         result = ''
         for i in range(8):
             # производим простую замену по таблице
-            result += bin(SUBSITUTION_BLOCK[i + 1][SUBSITUTION_BLOCK[0].index(int(temp_val[i * 4:i * 4 + 4],2))])[2:].zfill(4)
+            result += hex(SUBSITUTION_BLOCK[-(i + 1)][int(temp_val[i],16)])[2:]
+        result = bin(int(result,16))[2:].zfill(32)
         result = result[11:] + result[:11] # циклический сдвиг на 11 бит
         return int(result, 2)
 
@@ -67,8 +67,8 @@ class MagmaSimpleSubsition:
         for i in range(8):
             # в последних 8 итерациях подключи используем в другом порядке
             left_part, right_part = round_encrypt(left_part, right_part, self.sub_keys[7 - i])
-
-        return left_part, right_part
+        
+        return right_part, left_part
 
     def _decrypt_subsitution(self, left_part, right_part):
         '''
@@ -85,7 +85,7 @@ class MagmaSimpleSubsition:
             left_part_int = int(left_part, 2)
             return bin(right_part ^ self._encrypt_function(left_part_int, key))[2:].zfill(32), left_part
         
-
+        left_part, right_part = right_part, left_part
         for i in range(8):
             left_part, right_part = round_decrypt(left_part, right_part, self.sub_keys[i])
 

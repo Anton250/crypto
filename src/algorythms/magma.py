@@ -19,7 +19,7 @@ class MagmaSubsitution:
         i = 1
         encrypted = ''
         for l in hx:
-            encrypted += self.matrix[i][self.matrix[0].index(l)]
+            encrypted += self.matrix[-(i + 1)][self.matrix[0].index(l)]
             i += 1
             if i > 8:
                 i = 1
@@ -30,7 +30,7 @@ class MagmaSubsitution:
         i = 1
         decrypted = ''
         for l in mes:
-            decrypted += self.matrix[0][self.matrix[i].index(l)]
+            decrypted += self.matrix[0][self.matrix[-(i + 1)].index(l)]
             i += 1
             if i > 8:
                 i = 1

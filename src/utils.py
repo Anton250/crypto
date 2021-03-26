@@ -4,7 +4,7 @@ from src.crypto.serializers import ActionSerializer
 
 
 def replace_symbols(message:str):
-    return message.replace(
+    return message.upper().replace(
         ' ', ''
     ).replace(
         '.', 'ТЧК'
@@ -38,6 +38,8 @@ def replace_symbols(message:str):
         '0', 'ноль'
     ).replace(
         '\n', ''
+    ).replace(
+        'Ё', 'Е'
     )
 
 
