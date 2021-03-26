@@ -40,6 +40,10 @@ def replace_symbols(message:str):
         '\n', ''
     ).replace(
         'Ё', 'Е'
+    ).replace(
+        '(', ''
+    ).replace(
+        ')', ''
     )
 
 
