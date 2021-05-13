@@ -1,5 +1,5 @@
 from rest_framework.serializers import ValidationError
-from src.utils import square_hash
+from src.square_hash import square_hash
 from random import randint
 from src.elliptical_curve import EllipticalCurve
 

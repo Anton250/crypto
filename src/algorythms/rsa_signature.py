@@ -1,6 +1,6 @@
 from src.comparison import Comparison, Eratosthene
 from rest_framework.serializers import ValidationError
-from src.utils import square_hash
+from src.square_hash import square_hash
 
 
 class RSASignature:
