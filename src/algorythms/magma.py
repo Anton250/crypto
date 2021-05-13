@@ -1,6 +1,7 @@
 from rest_framework.serializers import ValidationError
 from cached_property import cached_property
 from math import ceil
+from random import randint
 
 
 SUBSITUTION_BLOCK = [
@@ -13,6 +14,7 @@ SUBSITUTION_BLOCK = [
     (6, 8, 2, 3, 9, 10, 5, 12, 1, 14, 4, 7, 11, 13, 0, 15),
     (12, 4, 6, 2, 10, 5, 11, 9, 14, 8, 13, 7, 0, 3, 15, 1),
 ]
+ENGLISH_ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
 class Magma:
     def __init__(self, keys={}, **kwargs):
