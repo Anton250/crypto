@@ -44,19 +44,20 @@ class A52:
 
 
     def encrypt(self, mes):
-        mes_len = len(bytes(mes, 'utf-8'))
+        mes_len = len(bytes(mes, 'utf-8').hex())
         mes = bin(int(bytes(mes, 'utf-8').hex(), 16))[2:].zfill(mes_len * 4)
         encrypted = ''
         for l in mes:
-            func_result = self._synchronization_func(self.R4[10], self.R4[7], self.R3[3])
-            self.R1 = self._shift_registr_with_condition(self.R1, func_result, 10, bits_pos=[18, 17, 16, 13])
-            self.R2 = self._shift_registr_with_condition(self.R2, func_result, 7, bits_pos=[21, 20])
-            self.R3 = self._shift_registr_with_condition(self.R3, func_result, 3, bits_pos=[22, 21, 20, 7])
-            self.R4 = self._shift_registr(self.R4, bits_pos=[16, 11])
+            func_result = self._synchronization_func(self.R4[-11], self.R4[-8], self.R4[-4])
+            self.R1 = self._shift_registr_with_condition(self.R1, func_result, -11, bits_pos=[-19, -18, -17, -14])
+            self.R2 = self._shift_registr_with_condition(self.R2, func_result, -8, bits_pos=[-22, -21])
+            self.R3 = self._shift_registr_with_condition(self.R3, func_result, -4, bits_pos=[-23, -22, -21, -8])
+            self.R4 = self._shift_registr(self.R4, bits_pos=[-17, -12])
             encrypted += str(
-                self._synchronization_func(self.R1[15], self.R1[14], self.R1[12]) ^\
-                self._synchronization_func(self.R2[16], self.R2[13], self.R2[9]) ^\
-                self._synchronization_func(self.R3[18], self.R3[16], self.R3[13]) ^\
+                int(self.R1[0]) ^ int(self.R2[0]) ^ int(self.R3[0]) ^\
+                self._synchronization_func(self.R1[-16], self.R1[-15], self.R1[-13]) ^\
+                self._synchronization_func(self.R2[-17], self.R2[-14], self.R2[-10]) ^\
+                self._synchronization_func(self.R3[-19], self.R3[-15], self.R3[-14]) ^\
                 int(l)
             )
         return hex(int(encrypted, 2))[2:]
@@ -67,15 +68,16 @@ class A52:
         mes = bin(int(mes, 16))[2:].zfill(mes_len * 4)
         decrypted = ''
         for l in mes:
-            func_result = self._synchronization_func(self.R4[10], self.R4[7], self.R3[3])
-            self.R1 = self._shift_registr_with_condition(self.R1, func_result, 10, bits_pos=[18, 17, 16, 13])
-            self.R2 = self._shift_registr_with_condition(self.R2, func_result, 7, bits_pos=[21, 20])
-            self.R3 = self._shift_registr_with_condition(self.R3, func_result, 3, bits_pos=[22, 21, 20, 7])
-            self.R4 = self._shift_registr(self.R4, bits_pos=[16, 11])
+            func_result = self._synchronization_func(self.R4[-11], self.R4[-8], self.R4[-4])
+            self.R1 = self._shift_registr_with_condition(self.R1, func_result, -11, bits_pos=[-19, -18, -17, -14])
+            self.R2 = self._shift_registr_with_condition(self.R2, func_result, -8, bits_pos=[-22, -21])
+            self.R3 = self._shift_registr_with_condition(self.R3, func_result, -4, bits_pos=[-23, -22, -21, -8])
+            self.R4 = self._shift_registr(self.R4, bits_pos=[-17, -12])
             decrypted += str(
-                self._synchronization_func(self.R1[15], self.R1[14], self.R1[12]) ^\
-                self._synchronization_func(self.R2[16], self.R2[13], self.R2[9]) ^\
-                self._synchronization_func(self.R3[18], self.R3[16], self.R3[13]) ^\
+                int(self.R1[0]) ^ int(self.R2[0]) ^ int(self.R3[0]) ^\
+                self._synchronization_func(self.R1[-16], self.R1[-15], self.R1[-13]) ^\
+                self._synchronization_func(self.R2[-17], self.R2[-14], self.R2[-10]) ^\
+                self._synchronization_func(self.R3[-19], self.R3[-15], self.R3[-14]) ^\
                 int(l)
             )
         return bytearray.fromhex(hex(int(decrypted, 2))[2:]).decode('utf-8')

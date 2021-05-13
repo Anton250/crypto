@@ -1,12 +1,16 @@
 class Tritemy:
     def __init__(self, alph='АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ', **kwargs):
         self.alph = alph
+        # генерируем таблицу Тритемия
         self.alph_matrix = [
             alph[shift:] + alph[:shift]
             for shift in range(len(alph))
         ]
 
     def encrypt(self, mes):
+        '''
+        Функция шифрования
+        '''
         encrypted = ''
         i = 0
         for l in mes:
@@ -16,6 +20,9 @@ class Tritemy:
         return encrypted
     
     def decrypt(self, mes):
+        '''
+        Функция расшифрования
+        '''
         decrypted = ''
         i = 0
         for l in mes:
@@ -23,5 +30,3 @@ class Tritemy:
             i += 1
         
         return decrypted
-
-        

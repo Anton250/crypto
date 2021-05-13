@@ -2,6 +2,7 @@ from src.algorythms.tritemy import Tritemy
 
 class VizhinerS(Tritemy):
     def __init__(self, keys={}, **kwargs):
+        # генерация таблицы Тритемия происходит в родительском классе
         super().__init__(**kwargs)
         self.key = keys.get('t', '')
 

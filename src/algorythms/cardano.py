@@ -6,6 +6,7 @@ class Cardano:
         self.key = keys.get('R')
         self.alph = 'АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ'
         cnt = 0
+        # проеряем решетку на отсутствие симметрии
         for i in range(len(self.key)):
             for j in range(len(self.key[i])):
                 if self.key[i][j] == 1:
@@ -43,6 +44,7 @@ class Cardano:
     def __encrypt(self, mes):
         encrypted = ''
         max_len = len(self.key) * len(self.key[0])
+        # дополняем сообщение, чтобы его длина была равна количеству ячеек ключа
         if len(mes) % max_len != 0:
             for i in range(max_len - len(mes) % max_len):
                 mes += self.alph[randint(0, len(self.alph) - 1)]
@@ -52,17 +54,21 @@ class Cardano:
         l = 0
         for r in range(4):
             for i, row in enumerate(self.key):
+                # заполняем таблицу в соответствии с "выколотыми" ячейками
                 for j, col in enumerate(row):
                     if int(col) == 1:
                         table[i][j] = mes[l]
                         l += 1
             if r == 0:
+                # переворачиваем по диагонали
                 self.rotate_horizontal()
                 self.rotate_vertical()
                 continue
             elif r == 1:
+                # переворачиваем по вертикали
                 self.rotate_vertical()
             elif r == 2:
+                # переворачиваем по диагонали
                 self.rotate_horizontal()
                 self.rotate_vertical()
             else:
@@ -81,6 +87,7 @@ class Cardano:
 
         l = 0
 
+        # заполняем таблицу
         for i in range(len(self.key)):
             for j in range(len(self.key[0])):
                 table[i][j] = mes[l]
@@ -88,16 +95,20 @@ class Cardano:
 
         for r in range(4):
             for i, row in enumerate(self.key):
+                # считываем сообщение в соответствии с "выколотыми" ячейками
                 for j, col in enumerate(row):
                     if int(col) == 1:
                         decrypted += table[i][j]
             if r == 0:
+                # переворачиваем по диагонали
                 self.rotate_horizontal()
                 self.rotate_vertical()
                 continue
             elif r == 1:
+                # переворачиваем по вертикали
                 self.rotate_vertical()
             elif r == 2:
+                # переворачиваем по диагонали
                 self.rotate_horizontal()
                 self.rotate_vertical()
             else:
@@ -109,6 +120,7 @@ class Cardano:
     def encrypt(self, mes):
         encrypted = ''
         max_len = len(self.key) * len(self.key[0])
+        # разбиваем сообщение на блоки
         blocks_cnt = len(mes) // max_len + 1 if len(mes) % max_len != 0 else len(mes) // max_len
         for i in range(blocks_cnt):
             encrypted += self.__encrypt(mes[i * max_len: i * max_len + max_len])
@@ -119,6 +131,7 @@ class Cardano:
     def decrypt(self, mes):
         decrypted = ''
         max_len = len(self.key) * len(self.key[0])
+        # разбиваем сообщение на блоки
         blocks_cnt = len(mes) // max_len + 1 if len(mes) % max_len != 0 else len(mes) // max_len
         for i in range(blocks_cnt):
             decrypted += self.__decrypt(mes[i * max_len: i * max_len + max_len])
