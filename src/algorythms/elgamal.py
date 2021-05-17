@@ -13,13 +13,13 @@ class Elgamal:
             raise ValidationError('P не является простым числом')
         self.g = keys.get('g')
         if self.g:
-            g = int(self.g)
-            if g < 1 or g >= self.p:
+            self.g = int(self.g)
+            if self.g < 1 or self.g >= self.p:
                 raise ValidationError('g должно быть в диапазоне 1 < g < p')
         self.x = keys.get('x')
         if self.x:
-            x = int(self.x)
-            if x < 1 or x >= self.p:
+            self.x = int(self.x)
+            if self.x < 1 or self.x >= self.p:
                 raise ValidationError('x должно быть в диапазоне 1 < x < p')
         self.y = keys.get('y')
         self.alph = alph
