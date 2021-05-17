@@ -54,7 +54,7 @@ def do_action(data):
         alphabet = 'АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ'
     algo_from_db = Algorythm.objects.get(id=data['algorythm'])
     algorythm = getattr(algos, algo_from_db.class_name)(keys=data['keys'], alph=alphabet)
-    if not algo_from_db.no_alphabet and (data['action'] == ActionSerializer.ENCRYPT):
+    if not algo_from_db.no_alphabet and (data['action'] == ActionSerializer.ENCRYPT) or algo_from_db.type == Algorythm.TYPE_SIGNATURE:
         data['text'] = replace_symbols(data['text']).upper()
     if (data['action'] == ActionSerializer.ENCRYPT):
         result = algorythm.encrypt(data['text'])

@@ -21,7 +21,7 @@ class DiffieHellman:
         a = int(self.a)
         if a >= n or a <= 1:
             raise ValidationError('a должно быть в диапазоне 1 < a < n')
-        Y = a^K % n
+        Y = a**K % n
         if Y == 1:
             raise ValidationError('Y получилось равным 1')
         if Y == K:
@@ -38,7 +38,7 @@ class DiffieHellman:
         if Y >= n or Y <= 1:
             raise ValidationError('Y должно быть в диапазоне 1 < Y < n')
         K = self.K
-        K = Y^K % n
+        K = Y**K % n
         if K == 1:
             raise ValidationError('K получилось равным 1')
 

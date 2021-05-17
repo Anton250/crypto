@@ -31,12 +31,16 @@ class RSASignature:
         '''
         Метод подписания сообщения
         '''
+        # кодируем сообщение
         int_mes = [
             self.alph.index(l) + 1 for l in mes
         ]
+        # вычисляем хэш-код сообщения
         mes_hash = square_hash(int_mes, len(self.alph))
         comparison = Comparison((int(self.P) - 1) * (int(self.Q) - 1))
+        # вычисляем секретный ключ
         D = comparison.solve_comparsion(int(self.E), 1)
+        # подписываем сообщение s = M^D mod N
         signature = (mes_hash**D) % self.N
         return mes + '_' + str(signature)
         
@@ -51,12 +55,16 @@ class RSASignature:
             raise ValidationError('Сообщение должно быть в формате {ТЕКСТ}_{ПОДПИСЬ}.')
         self.N = int(self.N)
         self.E = int(self.E)
+        # кодируем сообщение
         int_mes = [
             self.alph.index(l) + 1 for l in mes
         ]
+        # вычисляем хэш-код сообщения
         mes_hash = square_hash(int_mes, len(self.alph))
+        # расшифровываем хэш-код
         decrypted_mes_hash = (int(signature)**self.E) % self.N
 
+        # проверяем подпись
         if mes_hash == decrypted_mes_hash:
             result = 'Подпись верна.' 
         else:

@@ -32,6 +32,7 @@ class GOST34102012:
         '''
         Метод подписания сообщения
         '''
+        # кодируем сообщение
         int_mes = [
             self.alph.index(l) + 1 for l in mes
         ]
@@ -55,6 +56,7 @@ class GOST34102012:
             mes, r, s = mes.split('_')
         except:
             raise ValidationError('Сообщение должно быть в формате {ТЕКСТ}_{r}_{s}.')
+        # кодируем сообщение
         int_mes = [
             self.alph.index(l) + 1 for l in mes
         ]
